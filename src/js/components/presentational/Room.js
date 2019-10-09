@@ -1,10 +1,20 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+let roomNameC = '';
 
 const Room = (props) => (
     <div>
-        <label name="users-on">{props.usersOn && '0/0'}</label>
-        <label name="rooom-name">   {props.roomName && '  Room'}</label>
+        <button name="rooom-name" onClick={()=>roomNameC = props.roomName}>   {props.roomName && '  Room'}</button>
     </div>
 );
 
-export default Room;
+const mapStateToProps = state => { 
+    return {
+        ...state,
+        room: roomNameC
+    };
+};
+
+
+export default connect(mapStateToProps)(Room);

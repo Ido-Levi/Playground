@@ -1,19 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import {messageSent} from '../../../actions/messageActions.js';
+const SendMessage = (props) => (
+    <div>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            console.log('from sndmsg: ' + e.target.elements.messageWritten.value.trim());
+            props.dispatch(messageSent(e.target.elements.messageWritten.value.trim()));
+        }}>
+            <input type='text' name='messageWritten'></input>
+            <button>send</button>
+        </form>
+    </div>
+);
 
-
-export default class SendMessage extends React.Component { 
-    render() {
-        return (
-            <div>
-                <form>
-                    <input type="text"></input>
-                    <button>Send</button>
-                </form>
-            </div>
-        );
-    }
-}
-// <form>
-// <input type="text" name="message">Type a message here...</input>
-// <button >Send</button>
-// </form>
+export default connect()(SendMessage);
