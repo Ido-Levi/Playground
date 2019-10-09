@@ -4,7 +4,7 @@ import {createStore, combineReducers} from 'redux';
 import { Provider } from 'react-redux';
 import msgReducer from './reducers/messageReducer.js';
 import roomReducer from './reducers/roomsReducer.js'
-import { messageRecieved } from './actions/messageActions.js';
+import { messageRecieved, refreshMessages } from './actions/messageActions.js';
 import MainWindow from './js/components/container/MainWindow.js';
 import io from 'socket.io-client';
 import './styles/styles.scss';
@@ -26,19 +26,35 @@ socket.on('connect', () => {
 
 socket.on('message', (msg) => { 
     console.log('MESSAGE HAS RECEIVED ON CLIENT! ' + msg);
-    store.dispatch(messageRecieved(msg));
+    console.log('msgrc + ');
+    console.log(msg);
+    if(msg[0] === currentRoom) {
+        store.dispatch(messageRecieved(msg));
+    }
 });
 
 store.subscribe((state) => {
-    if(store.getState().type === 'SendMessage') { 
-        socket.send( {'message':store.getState().msg, 'channel': currentRoom} );
+    if(store.getState().messages.type === 'SendMessage') { 
+        console.log("Message sent!");
+        socket.send( {'message':store.getState().messages.msg, 'channel': currentRoom} );
     }
 
-    if(store.getState().type === 'CHANGE_ROOM') { 
-        currentRoom = store.getState().room;
-    }
+    if(store.getState().rooms.type === 'changeRoom' && store.getState().messages.type !== 'SendMessage' )  { 
+        console.log("Change room!");
+        currentRoom = store.getState().rooms.room;
 
-    console.log('***************');
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = () => {
+            if(xmlHttp.responseText.length > 1) {
+                console.log(xmlHttp.responseText);
+                const msgsRec = JSON.parse(xmlHttp.responseText);
+                store.dispatch(refreshMessages(msgsRec));
+            }
+        };
+        xmlHttp.open("GET", 'http://127.0.0.1:5000/' + currentRoom, true);
+        xmlHttp.send(null);
+
+    }
 });
 
 const jsx = (

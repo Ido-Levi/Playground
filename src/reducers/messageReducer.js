@@ -18,6 +18,12 @@ export default (state = messageReducerDefaultState, action) => {
                 msg: action.msg,
                 type: 'SendMessage'
             };
+        case 'REFRESH_MESSAGES':
+            return {
+                ...state,
+                msgs: action.msgs,
+            }
+                
         default:
             return state;
     }
