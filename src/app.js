@@ -28,9 +28,10 @@ socket.on('message', (msg) => {
     console.log('MESSAGE HAS RECEIVED ON CLIENT! ' + msg);
     console.log('msgrc + ');
     console.log(msg);
-    if(msg[0] === currentRoom) {
-        store.dispatch(messageRecieved(msg));
-    }
+    // if(msg[0] === currentRoom) {
+    //     store.dispatch(messageRecieved(msg));
+    // }
+    store.dispatch(messageRecieved(msg));
 });
 
 store.subscribe((state) => {
